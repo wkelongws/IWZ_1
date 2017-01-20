@@ -1,42 +1,31 @@
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 
-public class test {
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		String line = "I-80 CBDS 57 EB Off Ramp to S Expressway Street";
-		System.out.println(line.length());
-		if (line.length()>32)
-		{
-			System.out.println(line.substring(0,32));
-		}
-		else
-		{
-			System.out.println(line.trim());
-		}
+public class test extends Configured implements Tool {
+	
+	public static void main ( String[] args ) throws Exception {
 		
-		String[] nodes = line.split(",");
-		String timestamp = nodes[4];
-		String date = timestamp.split(" ")[0];
+		int res = ToolRunner.run(new Configuration(), new test(), args);
+		System.exit(res); 
 		
-		String yy = date.split("/")[2];
-		String m = date.split("/")[0];
-		String dd = date.split("/")[1];
-		String D = m+"/"+dd+"/"+yy;
+	} // End main
+	
+	public int run ( String[] args ) throws Exception {
 		
-		String time = timestamp.split(" ")[1];
-		String hh = time.split(":")[0];
-		String mm = time.split(":")[1];
+		int numarg = args.length;
+		String input = args[0];
 		
-		int minnum = Integer.parseInt(mm)/5;			
+		System.out.println("WATCH HERE!!!!!");
 		
-		for (int i=0;i<nodes.length;i++)
-		{
-			System.out.println(nodes[i]);
-		}
-		//System.out.println(nodes[1].trim()+","+D+","+hh+","+Integer.toString(minnum)+","+nodes[11].trim()+","+nodes[8].trim()+","+nodes[10].trim()+","+"0");
+		System.out.println(input);
+		System.out.println(numarg);
 		
+		for (String n:args){System.out.println(n);}
+		
+		return 0;
 	}
-
 }

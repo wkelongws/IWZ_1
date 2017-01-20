@@ -35,7 +35,14 @@ public class IWZavgspeed20s extends Configured implements Tool {
 	
 	public int run ( String[] args ) throws Exception {
 		
-		String input = "Shuo/twoweekdatapull.txt";    // Input
+		
+		//String input = args[0];
+		
+
+		//if (numberinput==0){input = "Shuo/twoweekdatapull.txt";}
+
+		
+		    // Input
 		String temp = "Shuo/output";       // Round one output
 		//String temp1 = "/scr/shuowang/lab3/exp2/temp1/";     // Round two output
 		//String output1 = "/scr/shuowang/lab3/exp2/output1/";   // Round three/final output
@@ -78,7 +85,10 @@ public class IWZavgspeed20s extends Configured implements Tool {
 		// The input HDFS path for this job
 		// The path can be a directory containing several files
 		// You can add multiple input paths including multiple directories
-		FileInputFormat.addInputPath(job_one, new Path(input)); 
+		if (args.length==0){FileInputFormat.addInputPath(job_one, new Path("Shuo/twoweekdatapull.txt"));}
+		for (String input:args){FileInputFormat.addInputPath(job_one, new Path(input)); }
+		
+		//FileInputFormat.addInputPath(job_one, new Path(input1)); 
 		// FileInputFormat.addInputPath(job_one, new Path(another_input_path)); // This is legal
 		
 		// The output HDFS path for this job
@@ -111,6 +121,9 @@ public class IWZavgspeed20s extends Configured implements Tool {
 			// Split the edge into two nodes 
 			String[] nodes = line.split(",");
 			
+			if(nodes.length>=6 & (nodes.length-6)%11==0)
+			{
+			
 			int weightedspeedsum = 0;			
 			int countsum = 0;			
 			int occupancysum = 0;
@@ -133,13 +146,14 @@ public class IWZavgspeed20s extends Configured implements Tool {
 			int minnum = Integer.parseInt(mm)/5;			
 			
 			
+			
 			if(nodes[4].equals("failed"))
 			{
-				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+"."+ss), new Text("nocomma"));				
+				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":"+ss), new Text("nocomma"));				
 			}
 			if(nodes[4].equals("off"))
 			{
-				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+"."+ss), new Text("one,comma"));				
+				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":"+ss), new Text("one,comma"));				
 			}
 			
 			
@@ -160,6 +174,10 @@ public class IWZavgspeed20s extends Configured implements Tool {
 					String largecount = nodes[i*11+15];
 					
 					if(count.equals("null"))
+					{
+						count = "0";
+					}
+					if(Integer.parseInt(count)>17)
 					{
 						count = "0";
 					}
@@ -207,16 +225,17 @@ public class IWZavgspeed20s extends Configured implements Tool {
 				{
 					avgspeed = weightedspeedsum/1.6/countsum;
 				}				
-				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+"."+ss), new Text(Double.toString(avgspeed)+","+Integer.toString(countsum)+","+Double.toString(avgoccupancy)));
+				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":"+ss), new Text(Double.toString(avgspeed)+","+Integer.toString(countsum)+","+Double.toString(avgoccupancy)));
 				if (countsum!=smallcountsum+middlecountsum+largecountsum)
 				{
-					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+"."+ss), new Text("th,ree,com,ma"));
+					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":"+ss), new Text("th,ree,com,ma"));
 				}
 				if (zerospeednonzerocountflag>0)
 				{
-					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+"."+ss), new Text("fo,ur,co,mm,a"));
+					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":"+ss), new Text("fo,ur,co,mm,a"));
 				}
 			}					
+			}
 		} // End method "map"
 		
 	} // End Class Map_One

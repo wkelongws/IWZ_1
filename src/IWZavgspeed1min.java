@@ -24,11 +24,11 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 
 
-public class IWZavgspeedbylane extends Configured implements Tool {
+public class IWZavgspeed1min extends Configured implements Tool {
 	
 	public static void main ( String[] args ) throws Exception {
 		
-		int res = ToolRunner.run(new Configuration(), new IWZavgspeedbylane(), args);
+		int res = ToolRunner.run(new Configuration(), new IWZavgspeed1min(), args);
 		System.exit(res); 
 		
 	} // End main
@@ -57,7 +57,7 @@ public class IWZavgspeedbylane extends Configured implements Tool {
 		Job job_one = new Job(conf, "Exp2 Program Round One"); 	
 		
 		// Attach the job to this Driver
-		job_one.setJarByClass(IWZavgspeedbylane.class); 
+		job_one.setJarByClass(IWZavgspeed1min.class); 
 		
 		// Fix the number of reduce tasks to run
 		// If not provided, the system decides on its own
@@ -85,7 +85,6 @@ public class IWZavgspeedbylane extends Configured implements Tool {
 		// The input HDFS path for this job
 		// The path can be a directory containing several files
 		// You can add multiple input paths including multiple directories
-		if (args.length==0){FileInputFormat.addInputPath(job_one, new Path("Shuo/twoweekdatapull.txt"));}
 		for (String input:args){FileInputFormat.addInputPath(job_one, new Path(input)); }
 		
 		//FileInputFormat.addInputPath(job_one, new Path(input1)); 
@@ -149,11 +148,11 @@ public class IWZavgspeedbylane extends Configured implements Tool {
 			
 			if(nodes[4].equals("failed"))
 			{
-				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+Integer.toString(minnum)), new Text("nocomma"));				
+				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":00"), new Text("nocomma"));				
 			}
 			if(nodes[4].equals("off"))
 			{
-				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+Integer.toString(minnum)), new Text("one,comma"));				
+				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":00"), new Text("one,comma"));				
 			}
 			
 			
@@ -225,14 +224,14 @@ public class IWZavgspeedbylane extends Configured implements Tool {
 				{
 					avgspeed = weightedspeedsum/1.6/countsum;
 				}				
-				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+Integer.toString(minnum)), new Text(Double.toString(avgspeed)+","+Integer.toString(countsum)+","+Double.toString(avgoccupancy)));
+				context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":00"), new Text(Double.toString(avgspeed)+","+Integer.toString(countsum)+","+Double.toString(avgoccupancy)));
 				if (countsum!=smallcountsum+middlecountsum+largecountsum)
 				{
-					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+Integer.toString(minnum)), new Text("th,ree,com,ma"));
+					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":00"), new Text("th,ree,com,ma"));
 				}
 				if (zerospeednonzerocountflag>0)
 				{
-					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+Integer.toString(minnum)), new Text("fo,ur,co,mm,a"));
+					context.write(new Text(nodes[0].trim()+","+D+","+hh+","+mm+":00"), new Text("fo,ur,co,mm,a"));
 				}
 			}					
 			}
